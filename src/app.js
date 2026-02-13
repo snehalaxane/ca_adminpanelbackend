@@ -37,7 +37,7 @@ const app = express();
 
 // ✅ CORS (use the port your frontend runs on)
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3500"],
+  origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3500", "https://ca-adminpanelfrontend-eeoo.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));
