@@ -46,7 +46,7 @@ router.post("/logout", (req, res) => {
     res.clearCookie("admin-session", {
       path: "/",
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       secure: process.env.NODE_ENV === 'production',
     });
 
