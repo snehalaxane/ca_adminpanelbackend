@@ -26,7 +26,11 @@ router.post("/login", async (req, res) => {
   console.log("LOGIN SESSION AFTER SET:", req.session);
 
   req.session.save(() => {
-    res.json({ success: true });
+    res.json({ 
+      success: true,
+      email: admin.email,
+      lastLogin: admin.lastLogin
+    });
   });
 });
 
