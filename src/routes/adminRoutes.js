@@ -18,18 +18,14 @@ router.post("/login", async (req, res) => {
   admin.lastLogin = new Date();
   await admin.save();
 
-  req.session.admin = {
-    id: admin._id,
-    email: admin.email,
-    lastLogin: admin.lastLogin,
-  };
+  // Generate simple token
+  const token = Buffer.from(`${admin._id}:${admin.email}:${Date.now()}`).toString('base64');
 
-  req.session.save(() => {
-    res.json({ 
-      success: true,
-      email: admin.email,
-      lastLogin: admin.lastLogin
-    });
+  res.json({ 
+    success: true,
+    token,
+    email: admin.email,
+    lastLogin: admin.lastLogin
   });
 });
 
@@ -37,35 +33,39 @@ router.post("/login", async (req, res) => {
 
 // ---------------- LOGOUT ----------------
 router.post("/logout", (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      return res.status(500).json({ message: "Logout failed" });
-    }
-
-    res.clearCookie("admin-session", {
-      path: "/",
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      secure: process.env.NODE_ENV === 'production',
-    });
-
-    res.json({ message: "Logged out successfully" });
-  });
+  // With token-based auth, just respond with success
+  // Frontend will remove token from localStorage
+  res.json({ success: true, message: "Logged out" });
 });
 
 
 
 
-router.get("/me", (req, res) => {
-  if (!req.session || !req.session.admin) {
+router.get("/me", async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  
+  if (!token) {
     return res.status(401).json({ authenticated: false });
   }
 
-  res.json({
-    authenticated: true,
-    email: req.session.admin.email,
-    lastLogin: req.session.admin.lastLogin,
-  });
+  try {
+    const decoded = Buffer.from(token, 'base64').toString().split(':');
+    const adminId = decoded[0];
+    const email = decoded[1];
+    
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      return res.status(401).json({ authenticated: false });
+    }
+
+    res.json({
+      authenticated: true,
+      email: admin.email,
+      lastLogin: admin.lastLogin,
+    });
+  } catch (err) {
+    return res.status(401).json({ authenticated: false });
+  }
 });
 
 
