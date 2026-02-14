@@ -23,7 +23,6 @@ router.post("/login", async (req, res) => {
     email: admin.email,
     lastLogin: admin.lastLogin,
   };
-  console.log("LOGIN SESSION AFTER SET:", req.session);
 
   req.session.save(() => {
     res.json({ 
@@ -113,6 +112,5 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ message: "Error creating admin", error: err.message });
   }
 });
-
 
 module.exports = router;
