@@ -21,9 +21,6 @@ router.post("/login", async (req, res) => {
   req.session.admin = {
     id: admin._id,
     email: admin.email,
-    name: admin.name,
-    phone: admin.phone,
-    role: admin.role,
     lastLogin: admin.lastLogin,
   };
   console.log("LOGIN SESSION AFTER SET:", req.session);
@@ -43,10 +40,10 @@ router.post("/logout", (req, res) => {
     }
 
     res.clearCookie("admin-session", {
-      path: "/",          // 🔥 REQUIRED
+      path: "/",
       httpOnly: true,
       sameSite: "lax",
-      secure: false,      // true only if HTTPS
+      secure: process.env.NODE_ENV === 'production',
     });
 
     res.json({ message: "Logged out successfully" });
@@ -63,11 +60,7 @@ router.get("/me", (req, res) => {
 
   res.json({
     authenticated: true,
-    id: req.session.admin.id,
     email: req.session.admin.email,
-    name: req.session.admin.name || "Admin",
-    phone: req.session.admin.phone || "",
-    role: req.session.admin.role || "Super Admin",
     lastLogin: req.session.admin.lastLogin,
   });
 });

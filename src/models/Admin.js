@@ -12,18 +12,6 @@ const adminSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    name: {
-      type: String,
-      default: "Admin"
-    },
-    phone: {
-      type: String,
-      default: ""
-    },
-    role: {
-      type: String,
-      default: "Super Admin"
-    },
     lastLogin: {
       type: Date,
       default: null

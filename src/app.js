@@ -53,8 +53,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: false,      // localhost
-    sameSite: "lax",    // 👈 REQUIRED
+    secure: process.env.NODE_ENV === 'production', // true on HTTPS, false on localhost
+    sameSite: "lax",
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
