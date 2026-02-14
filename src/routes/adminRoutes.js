@@ -8,11 +8,24 @@ const adminAuth = require("../../middleware/middleware");
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  const admin = await Admin.findOne({ email });
-  if (!admin) return res.status(401).json({ message: "Invalid credentials" });
+  console.log("🔍 Login attempt for email:", email);
+
+  const admin = await Admin.findOne({ email: email.toLowerCase() });
+  
+  if (!admin) {
+    console.log("❌ Admin not found with email:", email);
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+
+  console.log("✅ Admin found:", admin.email);
 
   const isMatch = await bcrypt.compare(password, admin.password);
-  if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+  console.log("🔐 Password match:", isMatch);
+  
+  if (!isMatch) {
+    console.log("❌ Password mismatch");
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
 
   // Update lastLogin in database
   admin.lastLogin = new Date();
@@ -20,6 +33,8 @@ router.post("/login", async (req, res) => {
 
   // Generate simple token
   const token = Buffer.from(`${admin._id}:${admin.email}:${Date.now()}`).toString('base64');
+
+  console.log("✅ Login successful, token:", token.substring(0, 20));
 
   res.json({ 
     success: true,
@@ -110,6 +125,26 @@ router.post("/register", async (req, res) => {
   } catch (err) {
     console.error("Registration error:", err);
     res.status(500).json({ message: "Error creating admin", error: err.message });
+  }
+});
+
+// Diagnostic endpoint - check admin in database
+router.get("/diagnostic/check-admin", async (req, res) => {
+  try {
+    const admin = await Admin.findOne({ email: "admin@gmail.com" });
+    if (!admin) {
+      return res.json({ found: false, message: "No admin with email admin@gmail.com" });
+    }
+    res.json({
+      found: true,
+      email: admin.email,
+      hasPassword: Boolean(admin.password),
+      passwordLength: admin.password?.length,
+      lastLogin: admin.lastLogin,
+      createdAt: admin.createdAt
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
