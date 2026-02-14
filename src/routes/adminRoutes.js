@@ -14,10 +14,17 @@ router.post("/login", async (req, res) => {
   const isMatch = await bcrypt.compare(password, admin.password);
   if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
+  // Update lastLogin in database
+  admin.lastLogin = new Date();
+  await admin.save();
+
   req.session.admin = {
     id: admin._id,
     email: admin.email,
-    lastLogin: new Date(),
+    name: admin.name,
+    phone: admin.phone,
+    role: admin.role,
+    lastLogin: admin.lastLogin,
   };
   console.log("LOGIN SESSION AFTER SET:", req.session);
 
@@ -56,7 +63,11 @@ router.get("/me", (req, res) => {
 
   res.json({
     authenticated: true,
+    id: req.session.admin.id,
     email: req.session.admin.email,
+    name: req.session.admin.name || "Admin",
+    phone: req.session.admin.phone || "",
+    role: req.session.admin.role || "Super Admin",
     lastLogin: req.session.admin.lastLogin,
   });
 });
