@@ -78,15 +78,32 @@ router.put("/:categoryId", async (req, res) => {
 });
 
 // Delete job category
-router.delete("/:categoryId", async (req, res) => {
+// Delete job
+router.delete("/:categoryId/jobs/:jobId", async (req, res) => {
   try {
-    const { categoryId } = req.params;
-    await JobOpening.findByIdAndDelete(categoryId);
-    res.json({ message: 'Category deleted' });
+    const { categoryId, jobId } = req.params;
+
+    const category = await JobOpening.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    const job = category.jobs.id(jobId);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    job.deleteOne(); // safer than remove()
+    await category.save();
+
+    res.json({ message: "Job deleted successfully" });
+
   } catch (error) {
+    console.error("DELETE JOB ERROR:", error);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Add job to category
 router.post("/:categoryId/jobs", async (req, res) => {
