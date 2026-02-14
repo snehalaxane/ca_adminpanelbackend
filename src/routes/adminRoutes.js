@@ -148,4 +148,34 @@ router.get("/diagnostic/check-admin", async (req, res) => {
   }
 });
 
+// Diagnostic endpoint - reset admin password
+router.post("/diagnostic/reset-admin", async (req, res) => {
+  try {
+    // Delete existing admin
+    await Admin.deleteOne({ email: "admin@gmail.com" });
+    console.log("✅ Deleted old admin");
+
+    // Create fresh admin with password
+    const hashedPassword = await bcrypt.hash("admin123", 10);
+    const newAdmin = new Admin({
+      email: "admin@gmail.com",
+      password: hashedPassword,
+      lastLogin: null
+    });
+    
+    await newAdmin.save();
+    console.log("✅ Created fresh admin with hashed password");
+
+    res.json({
+      success: true,
+      message: "Admin reset successfully",
+      email: "admin@gmail.com",
+      password: "admin123",
+      passwordHash: hashedPassword.substring(0, 20) + "..."
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
