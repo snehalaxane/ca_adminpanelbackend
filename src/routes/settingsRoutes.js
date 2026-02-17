@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
+console.log("CORRECT SETTINGS ROUTE ACTIVE");  // 👈 ADD HERE
 const GeneralSettings = require('../models/GeneralSettings');
 const ThemeSettings = require('../models/ThemeSettings');
 const EmailSettings = require('../models/EmailSettings');
 
 const multer = require('multer');
 const path = require('path');
-console.log("UPLOAD ROUTE HIT");
-console.log("FILE:", req.file);
+
 
 
 const storage = multer.diskStorage({
