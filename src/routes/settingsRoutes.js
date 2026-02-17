@@ -6,6 +6,9 @@ const EmailSettings = require('../models/EmailSettings');
 
 const multer = require('multer');
 const path = require('path');
+console.log("UPLOAD ROUTE HIT");
+console.log("FILE:", req.file);
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -34,12 +37,25 @@ router.get('/general', async (req, res) => {
 
 router.put('/general', async (req, res) => {
     try {
-        const settings = await GeneralSettings.findOneAndUpdate({}, req.body, { upsert: true, new: true });
-        res.json(settings);
+        const updates = { ...req.body };
+
+        // Prevent overwriting logoUrl with empty string
+        if (!updates.logoUrl) {
+            delete updates.logoUrl;
+        }
+
+        const settings = await GeneralSettings.findOneAndUpdate(
+            {},
+            updates,
+            { upsert: true, new: true }
+        );
+
+        res.json(settings); 
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 });
+
 
 // --- Theme Settings ---
 router.get('/theme', async (req, res) => {
@@ -102,6 +118,7 @@ router.post('/general/logo', upload.single('logo'), async (req, res) => {
             { logoUrl },
             { upsert: true, new: true }
         );
+           console.log("DB Updated:", settings);   // optional but useful
 
         res.json({ logoUrl });
 
