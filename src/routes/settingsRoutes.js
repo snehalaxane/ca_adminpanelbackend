@@ -4,21 +4,27 @@ console.log("CORRECT SETTINGS ROUTE ACTIVE");  // 👈 ADD HERE
 const GeneralSettings = require('../models/GeneralSettings');
 const ThemeSettings = require('../models/ThemeSettings');
 const EmailSettings = require('../models/EmailSettings');
-
+const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
+const uploadPath = path.join(__dirname, '../public/uploads');
 
 
+
+
+
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
+}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/uploads/');
+    cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname); // 👈 keep original name
+    cb(null, file.originalname);
   }
 });
-
 
 const upload = multer({ storage });
 
