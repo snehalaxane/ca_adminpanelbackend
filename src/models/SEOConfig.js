@@ -5,11 +5,11 @@ const seoConfigSchema = new mongoose.Schema({
     urlSlug: { type: String, required: true },
     metaTitle: { type: String, default: '' },
     metaDescription: { type: String, default: '' },
-    keywords: { type: String, default: '' },
-    ogImage: { type: String, default: '' },
-    indexPage: { type: Boolean, default: true },
-    followLinks: { type: Boolean, default: true },
-    includeInSitemap: { type: Boolean, default: true }
+    keywords: {
+  type: [String],
+  default: []
+},
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('SEOConfig', seoConfigSchema);
