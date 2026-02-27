@@ -53,8 +53,10 @@ app.use(cors({
         "http://localhost:3000",
         "http://localhost:5173",
         "https://ca-adminpanelfrontend-n2gh.vercel.app",
-        "https://ca-homepagefrontend.vercel.app"
-
+        "https://ca-homepagefrontend.vercel.app",
+        "https://superadmin.rajuandprasad.com",
+        "https://superadmin.rajuandprasad.com/",
+        "https://superadmin.rajuandprasad.com/login",
 
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],

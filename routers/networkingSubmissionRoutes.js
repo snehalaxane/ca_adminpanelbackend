@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const NetworkingSubmission = require("../model/NetworkingSubmission");
 const NetworkingOtp = require("../model/NetworkingOtp");
+const GeneralSettings = require("../model/GeneralSettings");
 const multer = require("multer");
 const path = require("path");
 const { createTransporter, getMailConfig } = require("../utils/mail");
@@ -44,12 +45,19 @@ router.post('/send-otp', async (req, res) => {
         const transporter = await createTransporter();
         const mailConfig = await getMailConfig();
 
+        const genSettings = await GeneralSettings.findOne() || {};
+        const siteLogo = genSettings.logoUrl
+            ? (genSettings.logoUrl.startsWith('http') ? genSettings.logoUrl : `${req.protocol}://${req.get('host')}${genSettings.logoUrl}`)
+            : '';
+        const siteName = genSettings.siteName || mailConfig.from;
+
         const mailOptions = {
-            from: `"${mailConfig.from}" <${mailConfig.user}>`,
+            from: `"${siteName}" <${mailConfig.user}>`,
             to: email,
             subject: "Verification Code for Networking Inquiry",
             html: `
         <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; color: #333;">
+          ${siteLogo ? `<div style="text-align: center; margin-bottom: 20px;"><img src="${siteLogo}" alt="${siteName}" style="max-height: 50px; object-fit: contain;"></div>` : ''}
           <h2 style="color: #022683; text-align: center;">Verification Code</h2>
           <p style="text-align: center; color: #666;">Use the following code to verify your identity for the networking inquiry.</p>
           <div style="background: #f4f6f9; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
@@ -126,13 +134,21 @@ router.post("/", upload.single("profileFile"), async (req, res) => {
         const transporter = await createTransporter();
         const mailConfig = await getMailConfig();
 
+        // Fetch site settings for logo and name
+        const genSettings = await GeneralSettings.findOne() || {};
+        const siteLogo = genSettings.logoUrl
+            ? (genSettings.logoUrl.startsWith('http') ? genSettings.logoUrl : `${req.protocol}://${req.get('host')}${genSettings.logoUrl}`)
+            : '';
+        const siteName = genSettings.siteName || mailConfig.from;
+
         // 1. Admin Email
         const adminMailOptions = {
-            from: `"${mailConfig.from} Networking" <${mailConfig.user}>`,
+            from: `"${siteName} Networking" <${mailConfig.user}>`,
             to: mailConfig.user,
             subject: `New Networking Inquiry: ${fullName}`,
             html: `
                 <div style="font-family: sans-serif; color: #333; max-width: 600px; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                    ${siteLogo ? `<div style="text-align: center; margin-bottom: 20px;"><img src="${siteLogo}" alt="${siteName}" style="max-height: 50px; object-fit: contain;"></div>` : ''}
                     <h2 style="color: #022683; border-bottom: 2px solid #022683; padding-bottom: 10px;">Networking Submission</h2>
                     <p><strong>Name:</strong> ${fullName}</p>
                     <p><strong>Organisation:</strong> ${organisation || 'N/A'}</p>
@@ -151,16 +167,17 @@ router.post("/", upload.single("profileFile"), async (req, res) => {
 
         // 2. User Email
         const userMailOptions = {
-            from: `"${mailConfig.from}" <${mailConfig.user}>`,
+            from: `"${siteName}" <${mailConfig.user}>`,
             to: email,
             subject: "Networking Inquiry Received",
             html: `
                 <div style="font-family: sans-serif; color: #333; max-width: 600px; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                    ${siteLogo ? `<div style="text-align: center; margin-bottom: 20px;"><img src="${siteLogo}" alt="${siteName}" style="max-height: 50px; object-fit: contain;"></div>` : ''}
                     <h2 style="color: #022683;">Hi ${fullName},</h2>
                     <p>Thank you for expressing interest in networking with us.</p>
                     <p>We have received your details and our team will review the same and get back to you shortly.</p>
                     <br/>
-                    <p>Best regards,<br/><strong>Team Raju & Prasad</strong></p>
+                    <p>Best regards,<br/><strong>Team ${siteName}</strong></p>
                 </div>
             `
         };

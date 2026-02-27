@@ -2,6 +2,7 @@ const router = require('express').Router();
 const ContactSettings = require('../model/ContactSettings');
 const ContactInquiry = require('../model/ContactInquiry');
 const ContactOtp = require('../model/ContactOtp');
+const GeneralSettings = require('../model/GeneralSettings');
 const nodemailer = require('nodemailer');
 const { createTransporter, getMailConfig } = require('../utils/mail');
 
@@ -157,19 +158,27 @@ router.post('/submit', async (req, res) => {
 
     await inquiry.save();
 
+    // Fetch site settings for logo and name
+    const genSettings = await GeneralSettings.findOne() || {};
+    const siteLogo = genSettings.logoUrl
+      ? (genSettings.logoUrl.startsWith('http') ? genSettings.logoUrl : `${req.protocol}://${req.get('host')}${genSettings.logoUrl}`)
+      : '';
+    const siteName = genSettings.siteName || mailConfig.from; // Changed fallback from 'Think Tank'
+
     // ─── SEND EMAILS ───
     const transporter = await createTransporter();
     const mailConfig = await getMailConfig();
     const settings = await ContactSettings.findOne();
-    const adminEmail = settings?.emailUs || mailConfig.user;
+    // const adminEmail = settings?.emailUs || mailConfig.user; // This line is effectively replaced by direct usage below
 
     // 1. Admin Notification
     const adminMailOptions = {
-      from: `"${mailConfig.from} Notifications" <${mailConfig.user}>`,
-      to: adminEmail,
+      from: `"${siteName} Notifications" <${mailConfig.user}>`,
+      to: mailConfig.user, // Changed recipient to mailConfig.user
       subject: `New Inquiry from ${finalName}`,
       html: `
         <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+          ${siteLogo ? `<div style="text-align: center; margin-bottom: 20px;"><img src="${siteLogo}" alt="${siteName}" style="max-height: 60px; object-fit: contain;"></div>` : ''}
           <h2 style="color: #022683; border-bottom: 2px solid #022683; padding-bottom: 10px;">New Inquiry Received</h2>
           <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
             <tr><td style="padding: 10px; font-weight: bold; width: 30%;">Name:</td><td style="padding: 10px;">${finalName}</td></tr>
@@ -178,7 +187,7 @@ router.post('/submit', async (req, res) => {
             <tr><td style="padding: 10px; font-weight: bold;">Message:</td><td style="padding: 10px;">${finalMessage}</td></tr>
           </table>
           <div style="margin-top: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px;">
-            <p style="font-size: 12px; color: #666;">More details are available in the Admin Panel.</p>
+            <p style="font-size: 12px; color: #666; text-align: center;">Sent from ${siteName} Admin Panel</p>
           </div>
         </div>
       `
@@ -186,18 +195,19 @@ router.post('/submit', async (req, res) => {
 
     // 2. User Confirmation
     const userMailOptions = {
-      from: `"${mailConfig.from}" <${mailConfig.user}>`,
+      from: `"${siteName}" <${mailConfig.user}>`,
       to: finalEmail,
       subject: "We've received your inquiry",
       html: `
         <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+          ${siteLogo ? `<div style="text-align: center; margin-bottom: 20px;"><img src="${siteLogo}" alt="${siteName}" style="max-height: 60px; object-fit: contain;"></div>` : ''}
           <h2 style="color: #022683;">Thank you for reaching out!</h2>
           <p>Hi ${finalName.split(' ')[0]},</p>
           <p>We've received your inquiry and our team will get back to you shortly.</p>
           <div style="background: #f8faff; padding: 15px; border-left: 4px solid #022683; border-radius: 4px; margin: 20px 0;">
              <p style="margin: 0; font-style: italic; color: #555;">"${finalMessage.length > 100 ? finalMessage.substring(0, 100) + '...' : finalMessage}"</p>
           </div>
-          <p>Best regards,<br/><strong>Team ${mailConfig.from}</strong></p>
+          <p>Best regards,<br/><strong>Team ${siteName}</strong></p>
         </div>
       `
     };

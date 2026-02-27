@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 
 const Admin = require("../model/Admin");
+const GeneralSettings = require("../model/GeneralSettings");
 const bcrypt = require("bcryptjs");
 const adminAuth = require("../middleware/middleware");
 const nodemailer = require("nodemailer");
@@ -120,19 +121,30 @@ router.post("/forgot-password", async (req, res) => {
     const transporter = await createTransporter();
     const mailConfig = await getMailConfig();
 
+    const genSettings = await GeneralSettings.findOne() || {};
+    const siteLogo = genSettings.logoUrl
+      ? (genSettings.logoUrl.startsWith('http') ? genSettings.logoUrl : `${req.protocol}://${req.get('host')}${genSettings.logoUrl}`)
+      : '';
+    const siteName = genSettings.siteName || mailConfig.from;
+
     const mailOptions = {
-      from: `"${mailConfig.from} Admin" <${mailConfig.user}>`,
+      from: `"${siteName}" <${mailConfig.user}>`,
       to: admin.email,
       subject: "Password Reset OTP",
       text: `Your OTP for password reset is: ${otp}. It is valid for 10 minutes.`,
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
-          <h2 style="color: #022683;">Password Reset OTP</h2>
-          <p>Your OTP for password reset is:</p>
-          <div style="font-size: 24px; font-weight: bold; color: #022683; padding: 10px; background-color: #fff; display: inline-block; border-radius: 5px;">
-            ${otp}
+        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; border-radius: 10px; max-width: 500px; margin: 0 auto;">
+          ${siteLogo ? `<div style="text-align: center; margin-bottom: 20px;"><img src="${siteLogo}" alt="${siteName}" style="max-height: 50px; object-fit: contain;"></div>` : ''}
+          <h2 style="color: #022683; text-align: center;">Password Reset OTP</h2>
+          <p style="text-align: center;">Your OTP for password reset is:</p>
+          <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 32px; font-weight: bold; color: #022683; padding: 15px 25px; background-color: #fff; display: inline-block; border-radius: 8px; letter-spacing: 5px; border: 1px solid #ddd;">
+              ${otp}
+            </div>
           </div>
-          <p>This OTP is valid for 10 minutes. If you did not request this, please ignore this email.</p>
+          <p style="text-align: center; color: #666; font-size: 14px;">This OTP is valid for 10 minutes. If you did not request this, please ignore this email.</p>
+          <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
+          <p style="text-align: center; color: #999; font-size: 12px;">© ${new Date().getFullYear()} ${siteName}</p>
         </div>
       `,
     };
