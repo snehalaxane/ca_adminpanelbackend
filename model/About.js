@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
 
 const statSchema = new mongoose.Schema({
-  number: { type: String, required: true },
-  label: { type: String, required: true },
-  icon: { type: String }, // Icon name from lucide-react
+  icon: { type: String }, // Image path
 });
 
 const aboutSchema = new mongoose.Schema({
