@@ -36,47 +36,46 @@ router.get("/", async (req, res) => {
 // CREATE or UPDATE About Section
 router.put("/", upload.any(), async (req, res) => {
   try {
-    console.log("[DEBUG] About PUT body:", JSON.stringify(req.body, null, 2));
-    let updateData = { ...req.body };
-
-    // Parse stats if they come as a JSON string
-    if (typeof updateData.stats === 'string') {
-      try {
-        updateData.stats = JSON.parse(updateData.stats);
-      } catch (e) {
-        console.error("Failed to parse stats JSON", e);
-      }
+    let statsArray = [];
+    if (typeof req.body.stats === 'string') {
+      try { statsArray = JSON.parse(req.body.stats); } catch (e) { }
+    } else if (Array.isArray(req.body.stats)) {
+      statsArray = req.body.stats;
     }
 
-    console.log("[DEBUG] Parsed updateData.stats:", updateData.stats);
-
-    // Assign uploaded files to their respective stats
-    if (req.files && req.files.length > 0) {
+    if (req.files && Array.isArray(req.files)) {
       req.files.forEach(file => {
-        // Match stat_image_0, stat_image_1, etc.
         const match = file.fieldname.match(/stat_image_(\d+)/);
         if (match) {
           const index = parseInt(match[1]);
-          if (updateData.stats && updateData.stats[index]) {
-            updateData.stats[index].image = "/uploads/about/" + file.filename;
-            console.log(`[DEBUG] Mapped ${file.filename} to stats[${index}].image`);
+          if (statsArray[index]) {
+            statsArray[index].image = "/uploads/about/" + file.filename;
+            console.log(`[DEBUG] Mapped index ${index} to ${statsArray[index].image}`);
           }
         }
       });
     }
 
     let about = await About.findOne();
-
     if (about) {
-      console.log("[DEBUG] Updating existing About document");
-      about = await About.findOneAndUpdate({}, { $set: updateData }, { new: true, runValidators: true });
+      console.log("[DEBUG] Updating via .save()");
+      about.title = req.body.title || about.title;
+      about.description = req.body.description || about.description;
+      about.enabled = req.body.enabled === "true";
+      about.stats = statsArray;
+      await about.save();
     } else {
-      console.log("[DEBUG] Creating new About document");
-      about = new About(updateData);
+      console.log("[DEBUG] Creating new doc");
+      about = new About({
+        title: req.body.title,
+        description: req.body.description,
+        enabled: req.body.enabled === "true",
+        stats: statsArray
+      });
       await about.save();
     }
 
-    console.log("[DEBUG] Final saved data:", JSON.stringify(about, null, 2));
+    console.log("[DEBUG] FINAL SAVED:", about.stats.map(s => s.image));
     res.json(about);
   } catch (err) {
     console.error("About update error:", err);
