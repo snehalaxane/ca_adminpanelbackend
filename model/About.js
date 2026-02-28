@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 
 const statSchema = new mongoose.Schema({
-  icon: { type: String }, // Image path
+  image: { type: String }, // New field name
+  icon: { type: String },  // Legacy field name for backward compatibility
+  text: { type: String },  // Caption/Caption text
 });
 
 const aboutSchema = new mongoose.Schema({
