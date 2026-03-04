@@ -45,6 +45,8 @@ const serviceIntroRoutes = require("./routers/serviceIntroRoutes");
 const footerSectionRoutes = require("./routers/footerSectionRoutes");
 const teamIntroRoutes = require("./routers/teamIntroRoutes");
 const historyIntroRoutes = require("./routers/historyIntroRoutes");
+const infrastructureRoutes = require("./routers/infrastructureRoutes");
+const newsletterSubscriptionRoutes = require("./routers/newsletterSubscriptionRoutes");
 
 const app = express();
 
@@ -144,6 +146,8 @@ app.use("/api/service-intro", serviceIntroRoutes);
 app.use("/api/footer-sections", footerSectionRoutes);
 app.use("/api/team-intro", teamIntroRoutes);
 app.use("/api/history-intro", historyIntroRoutes);
+app.use("/api/infrastructure", infrastructureRoutes);
+app.use("/api/newsletter-subscriptions", newsletterSubscriptionRoutes);
 
 app.use("/api/job-categories", jobOpeningsRoutes);
 
