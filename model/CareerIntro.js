@@ -6,6 +6,7 @@ const careerIntroSchema = new mongoose.Schema(
     subtitle: { type: String },
     description: { type: String },
     ctaText: { type: String },
+    backgroundImage: { type: String, default: "" },
     enabled: { type: Boolean, default: true }
   },
   { timestamps: true }

@@ -23,10 +23,10 @@ router.get("/", async (req, res) => {
 // UPDATE newsletter intro
 router.put("/", async (req, res) => {
     try {
-        const { title, subtitle, enabled } = req.body;
+        const { title, subtitle, enabled, backgroundImage } = req.body;
         const intro = await NewsletterIntro.findOneAndUpdate(
             {},
-            { title, subtitle, enabled },
+            { title, subtitle, enabled, backgroundImage },
             { new: true, upsert: true, setDefaultsOnInsert: true }
         );
         res.json(intro);

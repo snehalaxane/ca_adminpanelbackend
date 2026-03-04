@@ -42,6 +42,7 @@ router.put('/', async (req, res) => {
       if (typeof req.body.callNow !== 'undefined') settings.callNow = req.body.callNow;
       if (typeof req.body.emailUs !== 'undefined') settings.emailUs = req.body.emailUs;
       if (typeof req.body.enabled !== 'undefined') settings.enabled = req.body.enabled;
+      if (typeof req.body.backgroundImage !== 'undefined') settings.backgroundImage = req.body.backgroundImage;
     }
     settings.updatedAt = Date.now();
     await settings.save();

@@ -15,6 +15,7 @@ const selectClientsIntroSchema = new mongoose.Schema({
     stats: [statSchema],
     introEnabled: { type: Boolean, default: true },
     statsEnabled: { type: Boolean, default: true },
+    backgroundImage: { type: String, default: "" },
     enabled: { type: Boolean, default: true }
 }, { timestamps: true });
 

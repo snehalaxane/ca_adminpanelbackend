@@ -9,6 +9,7 @@ const gallerySchema = new mongoose.Schema({
     order: { type: Number, default: 0 },
     heading: { type: String },
     subheading: { type: String },
+    backgroundImage: { type: String, default: "" },
     isIntro: { type: Boolean, default: false }
 }, { timestamps: true });
 

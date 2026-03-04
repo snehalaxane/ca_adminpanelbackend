@@ -44,6 +44,7 @@ const selectClientsIntroRoutes = require("./routers/selectClientsIntroRoutes");
 const serviceIntroRoutes = require("./routers/serviceIntroRoutes");
 const footerSectionRoutes = require("./routers/footerSectionRoutes");
 const teamIntroRoutes = require("./routers/teamIntroRoutes");
+const historyIntroRoutes = require("./routers/historyIntroRoutes");
 
 const app = express();
 
@@ -57,6 +58,13 @@ app.use(cors({
         "https://superadmin.rajuandprasad.com",
         "https://superadmin.rajuandprasad.com/",
         "https://superadmin.rajuandprasad.com/login",
+        "https://homepage-rajuandprasad-copy.vercel.app",
+        "https://homepage-rajuandprasad-copy.vercel.app/",
+        "https://adminpanel-rajuandprasad-copy.vercel.app/",
+        "https://adminpanel-rajuandprasad-copy.vercel.app",
+        "https://adminpanel-rajuandprasad-copy.vercel.app/login",
+        "https://ca-homepagefrontend.vercel.app/"
+
 
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -135,6 +143,7 @@ app.use("/api/select-clients-intro", selectClientsIntroRoutes);
 app.use("/api/service-intro", serviceIntroRoutes);
 app.use("/api/footer-sections", footerSectionRoutes);
 app.use("/api/team-intro", teamIntroRoutes);
+app.use("/api/history-intro", historyIntroRoutes);
 
 app.use("/api/job-categories", jobOpeningsRoutes);
 

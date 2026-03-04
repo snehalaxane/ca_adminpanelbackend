@@ -38,7 +38,10 @@ router.get("/", async (req, res) => {
 });
 
 // UPDATE hero
-router.put("/", adminAuth, upload.single("image"), async (req, res) => {
+router.put("/", adminAuth, upload.fields([
+  { name: "image", maxCount: 1 },
+  { name: "mapImage", maxCount: 1 }
+]), async (req, res) => {
   try {
     const {
       highlightNumber,
@@ -52,7 +55,9 @@ router.put("/", adminAuth, upload.single("image"), async (req, res) => {
       stat2,
       stat3,
       presenceTitle,
-      presenceSubtitle
+      presenceSubtitle,
+      imageUrl,
+      mapImageUrl
     } = req.body;
 
     const updateData = {
@@ -66,7 +71,9 @@ router.put("/", adminAuth, upload.single("image"), async (req, res) => {
       stat2,
       stat3,
       presenceTitle,
-      presenceSubtitle
+      presenceSubtitle,
+      imageUrl,
+      mapImageUrl
     };
 
     if (ctas) {
@@ -77,8 +84,13 @@ router.put("/", adminAuth, upload.single("image"), async (req, res) => {
       }
     }
 
-    if (req.file) {
-      updateData.imageUrl = `uploads/hero/${req.file.filename}`;
+    if (req.files) {
+      if (req.files.image && req.files.image[0]) {
+        updateData.imageUrl = `uploads/hero/${req.files.image[0].filename}`;
+      }
+      if (req.files.mapImage && req.files.mapImage[0]) {
+        updateData.mapImageUrl = `uploads/hero/${req.files.mapImage[0].filename}`;
+      }
     }
 
     const hero = await HeroSection.findOneAndUpdate(

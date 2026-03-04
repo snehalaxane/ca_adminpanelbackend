@@ -98,6 +98,7 @@ router.put('/intro', async (req, res) => {
                 $set: {
                     heading,
                     subheading,
+                    backgroundImage: req.body.backgroundImage,
                     isIntro: true,
                     title: 'Gallery Header', // Just for clarity in DB
                     category: 'System',

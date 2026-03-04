@@ -7,6 +7,7 @@ const contactSettingsSchema = new mongoose.Schema({
     subheading: { type: String },
     callNow: { type: String },
     emailUs: { type: String },
+    backgroundImage: { type: String, default: "" },
     enabled: { type: Boolean, default: true },
     formFields: [
         {

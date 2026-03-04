@@ -20,9 +20,9 @@ const mongoose = require("mongoose");
 
 const HeroSchema = new mongoose.Schema(
   {
-    highlightNumber: String,
-    highlightText: String,
-    title: String,
+    // highlightNumber: String,
+    // highlightText: String,
+    // title: String,
     subtitle: String,
     description: String,
 
@@ -41,6 +41,7 @@ const HeroSchema = new mongoose.Schema(
     presenceSubtitle: String,
 
     imageUrl: String,
+    mapImageUrl: String,
 
     enabled: { type: Boolean, default: true },
   },

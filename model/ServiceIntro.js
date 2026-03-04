@@ -8,6 +8,7 @@ const serviceIntroSchema = new mongoose.Schema({
     ctaSubtitle: { type: String, default: "Our team of experts is ready to provide customized solutions for your business" },
     introEnabled: { type: Boolean, default: true },
     ctaEnabled: { type: Boolean, default: true },
+    backgroundImage: { type: String, default: "" },
     enabled: { type: Boolean, default: true }
 }, { timestamps: true });
 

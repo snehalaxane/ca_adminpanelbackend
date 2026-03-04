@@ -31,14 +31,15 @@ router.put("/", async (req, res) => {
     const { title, subtitle, description, ctaText, enabled } = req.body;
 
     let careerIntro = await CareerIntro.findOne();
-    
+
     if (!careerIntro) {
       careerIntro = new CareerIntro({
         title,
         subtitle,
         description,
         ctaText,
-        enabled
+        enabled,
+        backgroundImage: req.body.backgroundImage
       });
     } else {
       if (title) careerIntro.title = title;
@@ -46,6 +47,7 @@ router.put("/", async (req, res) => {
       if (description) careerIntro.description = description;
       if (ctaText) careerIntro.ctaText = ctaText;
       if (enabled !== undefined) careerIntro.enabled = enabled;
+      if (req.body.backgroundImage !== undefined) careerIntro.backgroundImage = req.body.backgroundImage;
     }
 
     careerIntro.updatedAt = Date.now();
