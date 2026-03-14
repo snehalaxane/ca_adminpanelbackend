@@ -47,6 +47,7 @@ const teamIntroRoutes = require("./routers/teamIntroRoutes");
 const historyIntroRoutes = require("./routers/historyIntroRoutes");
 const infrastructureRoutes = require("./routers/infrastructureRoutes");
 const newsletterSubscriptionRoutes = require("./routers/newsletterSubscriptionRoutes");
+const newsTickerRoutes = require("./routers/newsTickerRoutes");
 
 const app = express();
 
@@ -65,7 +66,8 @@ app.use(cors({
         "https://adminpanel-rajuandprasad-copy.vercel.app/",
         "https://adminpanel-rajuandprasad-copy.vercel.app",
         "https://adminpanel-rajuandprasad-copy.vercel.app/login",
-        "https://ca-homepagefrontend.vercel.app/"
+        "https://ca-homepagefrontend.vercel.app/",
+        "https://admin.rajuandprasad.com"
 
 
     ],
@@ -148,6 +150,7 @@ app.use("/api/team-intro", teamIntroRoutes);
 app.use("/api/history-intro", historyIntroRoutes);
 app.use("/api/infrastructure", infrastructureRoutes);
 app.use("/api/newsletter-subscriptions", newsletterSubscriptionRoutes);
+app.use("/api/news-ticker", newsTickerRoutes);
 
 app.use("/api/job-categories", jobOpeningsRoutes);
 

@@ -144,7 +144,8 @@ router.post("/", upload.single("profileFile"), async (req, res) => {
         // 1. Admin Email
         const adminMailOptions = {
             from: `"${siteName} Networking" <${mailConfig.user}>`,
-            to: mailConfig.user,
+            // to: "info@rajuandprasad.com",
+            to: "info@rajuandprasad.com",
             subject: `New Networking Inquiry: ${fullName}`,
             html: `
                 <div style="font-family: sans-serif; color: #333; max-width: 600px; padding: 20px; border: 1px solid #eee; border-radius: 10px;">

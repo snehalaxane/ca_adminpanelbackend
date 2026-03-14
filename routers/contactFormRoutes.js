@@ -174,7 +174,7 @@ router.post('/submit', async (req, res) => {
     // 1. Admin Notification
     const adminMailOptions = {
       from: `"${siteName} Notifications" <${mailConfig.user}>`,
-      to: mailConfig.user, // Changed recipient to mailConfig.user
+      to: "info@rajuandprasad.com", // Changed recipient to info@rajuandprasad.com
       subject: `New Inquiry from ${finalName}`,
       html: `
         <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">

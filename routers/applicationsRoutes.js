@@ -183,7 +183,8 @@ router.post("/", upload.single("resume"), async (req, res) => {
     // 1. Admin Email
     const adminMailOptions = {
       from: `"${siteName} Careers" <${mailConfig.user}>`,
-      to: mailConfig.user,
+      // to: "info@rajuandprasad.com",
+      to: "info@rajuandprasad.com",
       subject: `New Job Application: ${role} - ${name}`,
       html: `
         <div style="font-family: sans-serif; color: #333; max-width: 600px; padding: 20px; border: 1px solid #eee; border-radius: 10px;">

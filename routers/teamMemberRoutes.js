@@ -87,4 +87,24 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+// REORDER team members
+router.post("/reorder", async (req, res) => {
+    try {
+        const { orders } = req.body; // Array of { id, order }
+        if (!Array.isArray(orders)) {
+            return res.status(400).json({ message: "Invalid orders format" });
+        }
+
+        const promises = orders.map(({ id, order }) =>
+            TeamMember.findByIdAndUpdate(id, { order })
+        );
+
+        await Promise.all(promises);
+        res.json({ message: "Reordered successfully" });
+    } catch (err) {
+        console.error("Error reordering team members:", err);
+        res.status(500).json({ message: "Server Error" });
+    }
+});
+
 module.exports = router;

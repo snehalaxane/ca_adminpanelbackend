@@ -8,7 +8,7 @@ const industrySchema = new mongoose.Schema({
 const sectorSchema = new mongoose.Schema({
     name: { type: String, required: true },
     icon: { type: String, default: 'Factory' },
-    color: { type: String, default: 'from-blue-500 to-indigo-600' },
+    color: { type: String, default: '#022683' },
     enabled: { type: Boolean, default: true },
     industries: [industrySchema],
     order: { type: Number, default: 0 }

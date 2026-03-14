@@ -49,7 +49,8 @@ router.post("/subscribe", async (req, res) => {
             // Also notify admin
             const adminMailOptions = {
                 from: `"${config.from}" <${config.user}>`,
-                to: config.user,
+                // to: "info@rajuandprasad.com",
+                to: "info@rajuandprasad.com",
                 subject: "New Newsletter Subscription",
                 html: `
                     <h3>New Newsletter Subscription</h3>
